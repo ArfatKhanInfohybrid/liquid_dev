@@ -1,33 +1,25 @@
-# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
-# For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
+# Stage 1: Build the Angular app
+FROM node:20.11.1 as build
 
-name: Node.js Package
+WORKDIR /app
+# ENV DeployFolder dev
+COPY package*.json ./
 
-on:
-  release:
-    types: [created]
+RUN npm install
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm ci
-      - run: npm test
+COPY . .
 
-  publish-npm:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org/
-      - run: npm ci
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+# Build the Angular app for SSR
+RUN npm run build && npm run post-build
+
+# RUN npm run post-build
+
+# Stage 2: Create a lightweight container with just the Angular Universal files
+FROM node:20.11.1
+
+WORKDIR /app
+
+COPY --from=build /app/dist /app/dist
+
+EXPOSE 4000
+

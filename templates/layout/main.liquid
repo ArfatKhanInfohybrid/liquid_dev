@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <h1>My Booking Site</h1>
+    <nav>
+      <a href="/">Home</a> |
+      <a href="/listing">Listing</a> |
+      <a href="/traveller">Traveller</a> |
+      <a href="/payment">Payment</a> |
+      <a href="/confirmation">Confirmation</a>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <p>&copy; 2025 My Booking Site</p>
+  </footer>
+</body>
+</html>
